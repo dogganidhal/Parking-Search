@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:geocoder/geocoder.dart';
+import 'dart:async';
 import 'dart:convert';
 import 'main.dart';
+import 'destination.dart';
 
 class ZenparkSearchParkings extends State<HelloWorldApp> {
 
@@ -33,95 +36,112 @@ class ZenparkSearchParkings extends State<HelloWorldApp> {
       hintText: 'ex: Louvre museum, Eiffel tower ...',
       labelText: 'Location'
     ),
+    controller: new TextEditingController(),
   );
   
   @override
     Widget build(BuildContext context) {
       return new MaterialApp(
-        home: new Scaffold(
-          appBar: new AppBar(
-            title: new Text('Search Parkings'),
-            backgroundColor: Colors.pink,
-          ),
-          body: _isLoading ? new CircularProgressIndicator() 
-                          : new Form(
-            child: new ListView(
-              padding: const EdgeInsets.all(16.0),
-              children: <Widget>[
-                _locationTextField,
-                new InkWell(
-                  child: _startDateTextField,
-                  onTap: () {
-                    showDatePicker(
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                      firstDate: DateTime.now(),
-                      initialDate: DateTime.now(),
-                      context: context
-                    ).then((startDate) {
-                      showTimePicker(
-                        initialTime: TimeOfDay.now(),
-                        context: context
-                      ).then((startTime) {
-                        _populateStartDateTime(startDate, startTime);
-                      });
-                    });
-                  },
+        color: Colors.pink,
+        home: new Builder(
+          builder: (BuildContext nestedContext) {
+            return  new Scaffold(
+              appBar: new AppBar(
+                title: new Text('Search Parkings'),
+                backgroundColor: Colors.pink,
+              ),
+              body: _isLoading ? new Center(
+                child: new CircularProgressIndicator(),
+              ) : new Form(
+                child: new ListView(
+                  padding: const EdgeInsets.all(16.0),
+                  children: <Widget>[
+                    _locationTextField,
+                    new InkWell(
+                      child: _startDateTextField,
+                      onTap: () {
+                        showDatePicker(
+                          lastDate: DateTime.now().add(const Duration(days: 365)),
+                          firstDate: DateTime.now(),
+                          initialDate: DateTime.now(),
+                          context: nestedContext
+                        ).then((startDate) {
+                          showTimePicker(
+                            initialTime: TimeOfDay.now(),
+                            context: nestedContext
+                          ).then((startTime) {
+                            _populateStartDateTime(startDate, startTime);
+                          });
+                        });
+                      },
+                    ),
+                    new InkWell(
+                      child: _endDateTextField,
+                      onTap: () {
+                        showDatePicker(
+                          lastDate: DateTime.now().add(const Duration(days: 365)),
+                          firstDate: DateTime.now(),
+                          initialDate: DateTime.now(),
+                          context: nestedContext
+                        ).then((endDate) {
+                          showTimePicker(
+                            initialTime: TimeOfDay.now(),
+                            context: nestedContext
+                          ).then((endTime) {
+                            _populateEndDateTime(endDate, endTime);
+                          });
+                        });
+                      },
+                    ),
+                    new Container(
+                      child: new MaterialButton(
+                        child: new Text('Search', textScaleFactor: 1.33,),
+                        color: Colors.pink,
+                        textColor: Colors.white,
+                        height: 48.0,
+                        onPressed: () {
+                          setState(() {
+                            _isLoading = true;                    
+                          });
+                          _searchParkings(nestedContext);
+                        },
+                      ),
+                      margin: const EdgeInsets.only(top: 16.0),
+                    )
+                  ],
                 ),
-                new InkWell(
-                  child: _endDateTextField,
-                  onTap: () {
-                    showDatePicker(
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                      firstDate: DateTime.now(),
-                      initialDate: DateTime.now(),
-                      context: context
-                    ).then((endDate) {
-                      showTimePicker(
-                        initialTime: TimeOfDay.now(),
-                        context: context
-                      ).then((endTime) {
-                        _populateEndDateTime(endDate, endTime);
-                      });
-                    });
-                  },
-                ),
-                new Container(
-                  child: new MaterialButton(
-                    child: new Text('Search'),
-                    color: Colors.pink,
-                    textColor: Colors.white,
-                    height: 48.0,
-                    onPressed: () {
-                      setState(() {
-                        _isLoading = true;                    
-                      });
-                      _searchParkings();
-                    },
-                  ),
-                  margin: const EdgeInsets.only(top: 16.0),
-                )
-              ],
-            ),
-          )
-        ),
+              )
+            );
+          },
+        )
       );
     }
 
-  void _searchParkings() async {
+  void _searchParkings(concreteContext) async {
     print('looking for parkings ...');
-    var url = 'https://dev.zenpark.com/api/v2/account/signin';
-    var response = await http.post(url, body: {'username': 'nidhal', 'password': 'A68f73n96@'});
-    if (response.statusCode == 200) {
-      var map = json.decode(response.body);
-      final token = map['result'];
-      print('token: $token');
-      url = 'https://dev.zenpark.com/api/v2/parkings/list';
-      response = await http.get(url, headers: {'Zenpark-Authtoken': token});
-      map = json.decode(response.body);
-      print('parkings: $map');
-    } else {
-      print('$response.statusCode: Can\'t get token');
+    final url = 'https://zenithmobileapi.azurewebsites.net/v1/search/reservation';
+    final response = await http.post(url, body: json.encode({
+      'BeginDateUtc': _startDateTextField.controller.text,
+      'EndDateUtc': _endDateTextField.controller.text,
+      'location': {
+        'Address': _locationTextField.controller.text
+      },
+      'VehicleTypes': 1
+    }), headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
+    final map = json.decode(response.body);
+    var searchResults = [];
+    for (var item in map['Items']) {
+      searchResults.add(SearchResult.fromMap(item));
     }
+    Navigator.push(
+      concreteContext, 
+      new MaterialPageRoute(
+        builder: (context) => new ParkingListPage(searchResults)
+      )
+    );
     setState(() {
       _isLoading = false;   
     });
@@ -129,29 +149,42 @@ class ZenparkSearchParkings extends State<HelloWorldApp> {
 
   void _populateStartDateTime(DateTime date, TimeOfDay time) {
     DateTime preciseDate = DateTime(date.year, date.month, date.day, time.hour, time.minute); 
-    print('time is: ' + preciseDate.toString());
+    print('Start time: ' + preciseDate.toString());
     _startDateTextField.controller.text = preciseDate.toString();
   }
 
   void _populateEndDateTime(DateTime date, TimeOfDay time) {
     DateTime preciseDate = DateTime(date.year, date.month, date.day, time.hour, time.minute); 
-    print('time is: ' + preciseDate.toString());
+    print('End time: ' + preciseDate.toString());
     _endDateTextField.controller.text = preciseDate.toString();
-  }
-
-  void displayParkings(mapObject) {
-
-  }
-
-  _Coordinates getCurrentLocation() {
-    // ACCES TOKEN: pk.eyJ1IjoibmlkaGFsenAiLCJhIjoiY2podDR6MnZqMDk4cDNrbnZidWIwdmx6eCJ9.44ydpUyBpElkm2xUmgDG8w
-    return new _Coordinates(0.0, 0.0);
   }
 
 }
 
-class _Coordinates {
+class SearchResult {
+  
+  final double price;
+  final bool hasShuttle;
+  final bool almostFull;
+  final String publicId;
   final double longitude;
-  final double latitude;    
-  _Coordinates(this.latitude, this.longitude);
+  final double latitude;
+  final String name;
+  final String address;
+  final int distance;
+  final int travelTime;
+
+  SearchResult(
+    this.address, this.hasShuttle, this.almostFull, this.publicId, 
+    this.longitude, this.latitude, this.name, this.price, this.distance, 
+    this.travelTime);
+
+  static SearchResult fromMap(Map map) {
+    return new SearchResult(
+      map['Parking']['ParkingAddress'], map['HasShuttle'], map['ParkingAlmostFull'], 
+      map['Parking']['PublicId'], map['Parking']['Coordinates']['Longitude'], 
+      map['Parking']['Coordinates']['Latitude'], map['Parking']['ParkingName'], 
+      map['Price'], map['Distance'], map['TravelTime']);
+  }
+
 }
