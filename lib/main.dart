@@ -10,4 +10,3 @@ class HelloWorldApp extends StatefulWidget {
       return new ZenparkSearchParkings();
     }
 }
-
