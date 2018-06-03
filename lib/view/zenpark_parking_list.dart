@@ -5,8 +5,10 @@ import 'zenpark_parking_detail.dart';
 class ZenparkParkingList extends StatelessWidget {
 
   final List<SearchResult> searchResults;
+  final String beginUTC;
+  final String endUTC;
 
-  ZenparkParkingList(this.searchResults);
+  ZenparkParkingList({this.searchResults, this.beginUTC, this.endUTC});
 
   @override
     Widget build(BuildContext context) {
@@ -27,12 +29,18 @@ class ZenparkParkingList extends StatelessWidget {
                   child: new Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      new Text('\$BEGIN'),
+                      new Text(beginUTC, style: new TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87
+                      )),
                       new Container(
                         child: new Icon(Icons.chevron_right, color: Colors.pink,),
                         margin: new EdgeInsets.only(left: 16.0, right: 16.0),
                       ),
-                      new Text('\$END')
+                      new Text(beginUTC, style: new TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87
+                      ))
                     ],
                   ),
                 ),

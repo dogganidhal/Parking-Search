@@ -157,7 +157,11 @@ class ZenparkSearchParkings extends State<ParkingSearchApp> {
     );
 
     Navigator.push(concreteContext, new MaterialPageRoute(
-      builder: (context) => new ZenparkParkingList(results)
+      builder: (context) => new ZenparkParkingList(
+        searchResults: results,
+        beginUTC: startDateField.controller.text,
+        endUTC: endDateField.controller.text,
+      )
     ));
 
     setState(() {
