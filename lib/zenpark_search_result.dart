@@ -1,13 +1,4 @@
-class ZenparkParking extends Object {
-
-  final String publicId;
-  final String descriptionHeader;
-  final List<String> photos;
-  final String id;
-  final String name;
-  final String address;
-  
-}
+import 'model/zenpark_parking.dart';
 
 class ZenparkSearchResult extends Object {
   
@@ -34,5 +25,25 @@ class ZenparkSearchResult extends Object {
       map['Parking']['Coordinates']['Latitude'], map['Parking']['ParkingName'], 
       map['Price'], map['Distance'], map['TravelTime']);
   }
+
+}
+
+/* This should be the right object */
+
+class SearchResult {
+
+  final double price;
+  final double basePrice;
+  final bool hasShuttle;
+  final bool almostFull;
+  final String discountText;
+  final int distance;
+  final int travelTime;
+  final ZenparkParking parking;
+
+  SearchResult(
+    this.price, this.basePrice, this.hasShuttle, this.almostFull, 
+    this.discountText, this.distance, this.travelTime, this.parking
+  );
 
 }

@@ -1,5 +1,5 @@
-name: hello_world
-description: A new Flutter project.
+name: zp_parking_search
+description: Zenpark parking search with Flutter
 
 dependencies:
   flutter:

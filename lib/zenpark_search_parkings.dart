@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'main.dart';
-import 'dart:async';
 import 'dart:convert';
 import 'date_time_picker.dart';
 import 'zenpark_search_result.dart';
@@ -160,6 +159,7 @@ class ZenparkSearchParkings extends State<HelloWorldApp> {
     });
 
     final items = json.decode(response.body)['Items'];
+    
     List<ZenparkSearchResult> searchResults = [];
 
     if (items.length > 0) {
