@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'main.dart';
-import 'dart:convert';
-import 'date_time_picker.dart';
-import 'zenpark_search_result.dart';
-import 'zenpark_parking_list.dart';
+import 'package:zp_parking_search/main.dart';
+import 'package:zp_parking_search/view/zenpark_parking_list.dart';
+import 'package:zp_parking_search/controller/zenpark_search_controller.dart';
+import 'package:zp_parking_search/view/date_time_picker.dart';
 
-class ZenparkSearchParkings extends State<HelloWorldApp> {
+class ZenparkSearchParkings extends State<ZenParkingSearchApp> {
 
   final formatter = new DateFormat('yyyy-MM-dd HH:mm');
   bool isLoading = false;
@@ -145,31 +143,16 @@ class ZenparkSearchParkings extends State<HelloWorldApp> {
     final TextFormField startDateField = _startDateFieldKey.currentWidget;
     final TextFormField endDateField = _endDateFieldKey.currentWidget;
     final TextFormField locationField = _locationFieldKey.currentWidget;
-    const url = 'https://zenithmobileapi.azurewebsites.net/v1/search/reservation';
-    final response = await http.post(url, body: json.encode({
-      'BeginDateUtc': startDateField.controller.text,
-      'EndDateUtc': endDateField.controller.text,
-      'location': {
-        'Address': locationField.controller.text
-      },
-      'VehicleTypes': 1
-    }), headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    });
 
-    final items = json.decode(response.body)['Items'];
-    
-    List<ZenparkSearchResult> searchResults = [];
-
-    if (items.length > 0) {
-      for (final item in items) {
-        searchResults.add(ZenparkSearchResult.fromMap(item));
-      }
-    }
+    List results = await
+    ZenparkParkingSearchController.shared.performSearch(
+      beginUTC: startDateField.controller.text,
+      endUTC: endDateField.controller.text,
+      address: locationField.controller.text
+    );
 
     Navigator.push(concreteContext, new MaterialPageRoute(
-      builder: (context) => new ZenparkParkingList(searchResults)
+      builder: (context) => new ZenparkParkingList(results)
     ));
 
     setState(() {

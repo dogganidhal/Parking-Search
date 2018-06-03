@@ -4,26 +4,19 @@
 // find child widgets in the widget tree, read text, and verify that the values of widget properties
 // are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:zp_parking_search/main.dart';
+import 'package:zp_parking_search/controller/zenpark_search_controller.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(new HelloWorldApp());
+  test('Search controller', () async {
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    List results = await ZenparkParkingSearchController.shared.performSearch(
+      beginUTC: '2018-06-10 10:00',
+      endUTC: '2018-06-12 10:00',
+      address: 'Paris Demo'
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    print(results);
+    
   });
 }

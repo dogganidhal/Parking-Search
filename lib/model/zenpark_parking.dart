@@ -1,4 +1,4 @@
-
+import 'package:meta/meta.dart';
 
 class ZenparkParking {
 
@@ -10,18 +10,27 @@ class ZenparkParking {
 
   final GeographicCoordinates coordinates;
 
-  final List<String> photos;
-  final List<ParkingAccessType> accessTypes;
-  final List<VehicleType> vehicleTypes;
+  final List photos;
+  final int accessTypes;
+  final int vehicleTypes;
+  
   final List<ParkingService> services;
-
-  final Map<ParkingCharacteristic, Object> characteristics;
+  final List<ParkingCharacteristic> characteristics;
 
   ZenparkParking(
     this.publicId, this.id, this.descriptionHeader, this.name, this.address,
     this.coordinates, this.photos, this.accessTypes, this.vehicleTypes, 
     this.services, this.characteristics
   );
+
+  ZenparkParking.fromAPIMap(Map map) : 
+    publicId = map['PublicId'], descriptionHeader = map['DescriptionHeader'],
+    coordinates = GeographicCoordinates.fromAPIMap(map['Coordinates']),
+    accessTypes = map['AccessTypes'], vehicleTypes = map['VehicleTypes'],
+    photos = map['Photos'], id = map['ParkingId'], name = map['ParkingName'],
+    address = map['ParkingAddress'], 
+    services = ParkingService.servicesFromAPIMap(map['Services']),
+    characteristics = ParkingCharacteristic.characteristicsFromAPIMap(map['ParkingCharacteristics']);
   
 }
 
@@ -30,7 +39,10 @@ class GeographicCoordinates {
   final double longitude;
   final double latitude;
 
-  GeographicCoordinates(this.longitude, this.latitude);
+  GeographicCoordinates({this.longitude, this.latitude});
+
+  GeographicCoordinates.fromAPIMap(Map map) :
+    longitude = map['Longitude'], latitude = map['Latitude'];
 
 }
 
@@ -39,62 +51,44 @@ class ParkingService {
   final String name;
   final String information;
   final bool informationRequiredForReservation;
-  final ParkingServiceInfoType type;
-  final ParkingRequiredInformationType requiredInformationType;
-  final ParkingServiceInfoCharge charge;
+  final int type;
+  final int requiredInformationType;
+  final int charge;
 
-  ParkingService(
-    this.name, this.information, this.informationRequiredForReservation, 
-    this.type, this.requiredInformationType, this.charge
-  );
+  ParkingService({
+    @required this.name, @required this.information, 
+    @required this.informationRequiredForReservation,  @required this.type, 
+    @required this.requiredInformationType, @required this.charge
+  });
 
-}
+  ParkingService.fromAPIMap(Map map) :
+    name = map['Name'], requiredInformationType = map['RequiredInformationType'],
+    type = map['Type'], informationRequiredForReservation = map['InformationRequiredForReservation'],
+    charge = map['Charge'], information = map['Information'];
 
-class ParkingServiceInfoCharge {
-  static const FREE = 1;
-  static const FREE_UNDER_CONDITIONS = 2;
-  static const PAID = 3;
-}
-
-class ParkingServiceInfoType {
-  static const SHUTTLE = 0;
-  static const VALET = 1;
-}
-
-class ParkingRequiredInformationType {
-  static const TRAVEL = 0;
-}
-
-class ParkingAccessType {
-
-  static const ZENPASS = 1;
-  static const APPLICATION = 2;
-  static const KEYPAD = 4;
-  static const TICKET = 8;
-  static const RECEPTIONNIST = 16;
-
-}
-
-class VehicleType {
-
-  static const MOTO = 1;
-  static const SMALL = 2;
-  static const MEDIUM = 4;
-  static const LARGE = 8;
-  static const TALL = 16;
-  static const VERY_TALL = 32;
+  static List<ParkingService> servicesFromAPIMap(List list) {
+    List<ParkingService> services = [];
+    for (final item in list) {
+      services.add(new ParkingService.fromAPIMap(item));
+    }
+    return services;
+  }
 
 }
 
 class ParkingCharacteristic {
 
-  static const GUARDED = 1;
-  static const INDOOR = 2;
-  static const LIGHTED = 4;
-  static const MAXIMAL_HEIGHT = 8;
-  static const UNDERGROUD = 16;
-  static const VIDEO_SURVEILLANCE = 32;
-  static const VALET = 64;
-  static const PEDESTRIAN_FRIENDLY = 128;
+  final int key;
+  final dynamic value;
+
+  ParkingCharacteristic.fromAPIMap(Map map) : key = map['Key'], value = map['Value'];
+
+  static List<ParkingCharacteristic> characteristicsFromAPIMap(List list) {
+    List<ParkingCharacteristic> characteristics = [];
+    for (final item in list) {
+      characteristics.add(new ParkingCharacteristic.fromAPIMap(item));
+    }
+    return characteristics;
+  }
 
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'zenpark_search_result.dart';
+import 'package:zp_parking_search/model/zenpark_search_result.dart';
 import 'zenpark_parking_detail.dart';
 
 class ZenparkParkingList extends StatelessWidget {
 
-  final searchResults;
+  final List<SearchResult> searchResults;
 
   ZenparkParkingList(this.searchResults);
 
@@ -18,7 +18,7 @@ class ZenparkParkingList extends StatelessWidget {
           builder: (concreteContext) {
             return new ListView.builder(
               itemBuilder: (listContext, index) {
-                final ZenparkSearchResult searchResult = searchResults[index];
+                final SearchResult searchResult = searchResults[index];
                 return new FlatButton(
                   padding: const EdgeInsets.all(0.0),
                   child: new ParkingCellWidget(searchResult),
@@ -39,7 +39,7 @@ class ZenparkParkingList extends StatelessWidget {
 
 class ParkingCellWidget extends StatelessWidget {
 
-  final ZenparkSearchResult searchResult;
+  final SearchResult searchResult;
 
   ParkingCellWidget(this.searchResult);
 
@@ -52,10 +52,9 @@ class ParkingCellWidget extends StatelessWidget {
             new ListTile(
               leading: const Icon(Icons.image),
               trailing: new Text('$price €'),
-              title: new Text(searchResult.name),
-              subtitle: new Text(searchResult.address),
+              title: new Text(searchResult.parking.name),
+              subtitle: new Text(searchResult.parking.address),
             ), 
-            
           ],
         ),
       );

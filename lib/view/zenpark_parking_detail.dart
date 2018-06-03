@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'zenpark_search_result.dart';
+import 'package:zp_parking_search/model/zenpark_search_result.dart';
 
 class ZenparkParkingDetail extends StatelessWidget {
 
-  final ZenparkSearchResult searchResult;
+  final SearchResult searchResult;
 
   ZenparkParkingDetail(this.searchResult);
 
@@ -11,17 +11,17 @@ class ZenparkParkingDetail extends StatelessWidget {
     Widget build(BuildContext context) {
       return new Scaffold(
         appBar: new AppBar(
-          title: new Text(searchResult.name)
+          title: new Text(searchResult.parking.name)
         ),
         body: new Container(
           padding: new EdgeInsets.all(16.0),
           child: new ListView(
             children: <Widget>[
-              new Text(searchResult.name, 
+              new Text(searchResult.parking.name, 
                 textScaleFactor: 2.0, 
                 style: new TextStyle(fontWeight: FontWeight.bold),
               ),
-              new Text(searchResult.address, 
+              new Text(searchResult.parking.address, 
                 style: new TextStyle(color: Colors.grey)
               ),
             ],

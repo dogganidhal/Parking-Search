@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'zenpark_search_parkings.dart';
+import 'package:zp_parking_search/view/zenpark_search_parkings.dart';
 
-void main() => runApp(new HelloWorldApp());
+void main() => runApp(new ZenParkingSearchApp());
 
-class HelloWorldApp extends StatefulWidget {
+class ZenParkingSearchApp extends StatefulWidget {
   // This widget is the root of your application.
   @override
     State<StatefulWidget> createState() {
