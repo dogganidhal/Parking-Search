@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:zp_parking_search/model/zenpark_search_result.dart';
+import 'package:parking_search/model/zenpark_search_result.dart';
 
 class ZenparkParkingSearchController {
 
@@ -30,8 +30,10 @@ class ZenparkParkingSearchController {
     final items = json.decode(response.body)['Items'];
     List<SearchResult> results = [];
 
-    for (final item in items) {
-      results.add(new SearchResult.fromAPIMap(item));
+    if (items.length > 0) {
+      for (final item in items) {
+        results.add(new SearchResult.fromAPIMap(item));
+      }
     }
 
     completer.complete(results);

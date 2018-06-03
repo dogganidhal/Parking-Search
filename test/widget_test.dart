@@ -5,7 +5,7 @@
 // are correct.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:zp_parking_search/controller/zenpark_search_controller.dart';
+import 'package:parking_search/controller/zenpark_search_controller.dart';
 
 void main() {
   test('Search controller', () async {

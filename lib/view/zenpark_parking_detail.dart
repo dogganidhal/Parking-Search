@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zp_parking_search/model/zenpark_search_result.dart';
+import 'package:parking_search/model/zenpark_search_result.dart';
 
 class ZenparkParkingDetail extends StatelessWidget {
 
@@ -11,7 +11,7 @@ class ZenparkParkingDetail extends StatelessWidget {
     Widget build(BuildContext context) {
       return new Scaffold(
         appBar: new AppBar(
-          title: new Text(searchResult.parking.name)
+          title: new Text('Parking details')
         ),
         body: new Container(
           padding: new EdgeInsets.all(16.0),

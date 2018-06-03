@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 
 class ZenparkParking {
 
@@ -17,12 +16,6 @@ class ZenparkParking {
   final List<ParkingService> services;
   final List<ParkingCharacteristic> characteristics;
 
-  ZenparkParking(
-    this.publicId, this.id, this.descriptionHeader, this.name, this.address,
-    this.coordinates, this.photos, this.accessTypes, this.vehicleTypes, 
-    this.services, this.characteristics
-  );
-
   ZenparkParking.fromAPIMap(Map map) : 
     publicId = map['PublicId'], descriptionHeader = map['DescriptionHeader'],
     coordinates = GeographicCoordinates.fromAPIMap(map['Coordinates']),
@@ -39,8 +32,6 @@ class GeographicCoordinates {
   final double longitude;
   final double latitude;
 
-  GeographicCoordinates({this.longitude, this.latitude});
-
   GeographicCoordinates.fromAPIMap(Map map) :
     longitude = map['Longitude'], latitude = map['Latitude'];
 
@@ -54,12 +45,6 @@ class ParkingService {
   final int type;
   final int requiredInformationType;
   final int charge;
-
-  ParkingService({
-    @required this.name, @required this.information, 
-    @required this.informationRequiredForReservation,  @required this.type, 
-    @required this.requiredInformationType, @required this.charge
-  });
 
   ParkingService.fromAPIMap(Map map) :
     name = map['Name'], requiredInformationType = map['RequiredInformationType'],
